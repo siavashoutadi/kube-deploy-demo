@@ -47,7 +47,7 @@ spec:
               memory: 512Mi
           env:
             - name: API_URL
-              value: http://minikubefrontend/api/v1.0
+              value: http://minikubefrontend/api
           volumeMounts:
             - mountPath: /etc/nginx/conf.d
               name: config-volume
