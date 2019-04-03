@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-frontend-deployment
+  labels:
+    app: demo
+    tier: frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 33%
+  selector:
+    matchLabels:
+      app: demo
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: demo
+        tier: frontend
+    spec:
+      containers:
+        - name: demo-frontend
+          image: siavashoutadi/angular-demo:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 45
+            timeoutSeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 30
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 0.3
+              memory: 512Mi
+          env:
+            - name: API_URL
+              value: http://minikubefrontend/api/v1.0
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: config-volume
+      volumes:
+      - name: config-volume
+        configMap:
+          name: frontend-config
+          items:
+          - key: default.conf
+            path: default.conf
