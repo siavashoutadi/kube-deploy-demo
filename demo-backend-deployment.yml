@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-backend-deployment
+  labels:
+    app: demo
+    tier: backend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 33%
+  selector:
+    matchLabels:
+      app: demo
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: demo
+        tier: backend
+    spec:
+      containers:
+        - name: demo-backend
+          image: siavashoutadi/jersey-demo:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /jersey-demo/api/v1.0/health
+              port: 8080
+            initialDelaySeconds: 45
+            timeoutSeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /jersey-demo/api/v1.0/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 30
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 0.3
+              memory: 1024Mi
+          env:
+            - name: JERSEY_DEMO_DB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: connection_string
+            - name: JERSEY_DEMO_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: JERSEY_DEMO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
