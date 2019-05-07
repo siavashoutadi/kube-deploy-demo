@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: demo-backend
-          image: siavashoutadi/jersey-demo:latest
+          image: siavashoutadi/jersey-demo:0.1.0
           ports:
             - name: http
               containerPort: 8080
