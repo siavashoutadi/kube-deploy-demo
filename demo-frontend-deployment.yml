@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: demo-frontend
-          image: siavashoutadi/angular-demo:0.1.2
+          image: siavashoutadi/angular-demo:0.2.0
           ports:
             - containerPort: 80
           readinessProbe:
